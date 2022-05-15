@@ -6,7 +6,7 @@ import AuthContext from "../../store/auth-context";
 import classes from "./AuthForm.module.css";
 
 const AuthForm = () => {
-  const history = useHistory()
+  const history = useHistory();
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -27,7 +27,7 @@ const AuthForm = () => {
       password: passwordInput.current.value,
     };
     //optional add validation
-    
+
     setIsLoading(true);
     //Sıgn in or Sign up
     let url;
@@ -66,8 +66,11 @@ const AuthForm = () => {
         }
       })
       .then((data) => {
-        authCtx.login(data.idToken)
-        history.replace("/")
+        const expirationTime = new Date(
+          new Date().getTime() + (+data.expiresIn * 1000)
+        );
+        authCtx.login(data.idToken, expirationTime.toISOString());
+        history.replace("/");
       })
       .catch((err) => {
         alert(err.message);
